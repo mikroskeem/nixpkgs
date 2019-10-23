@@ -16825,6 +16825,7 @@ in
   bgnet = callPackage ../data/documentation/bgnet { };
 
   bibata-cursors = callPackage ../data/icons/bibata-cursors { };
+  bibata-extra-cursors = callPackage ../data/icons/bibata-cursors/extra.nix { };
 
   brise = callPackage ../data/misc/brise { };
 
