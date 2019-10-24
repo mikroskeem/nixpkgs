@@ -7,13 +7,13 @@
 
 buildPythonPackage rec {
   pname = "scikit-learn";
-  version = "0.20.4";
+  version = "0.21.3";
   # UnboundLocalError: local variable 'message' referenced before assignment
   disabled = stdenv.isi686;  # https://github.com/scikit-learn/scikit-learn/issues/5534
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "1z3w2c50dwwa297j88pr16pyrjysagsvdj7vrlq40q8777rs7a6z";
+    sha256 = "eb9b8ebf59eddd8b96366428238ab27d05a19e89c5516ce294abc35cea75d003";
   };
 
   buildInputs = [ pillow gfortran glibcLocales ];
