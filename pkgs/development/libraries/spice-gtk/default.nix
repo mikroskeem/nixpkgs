@@ -31,7 +31,7 @@
 , usbutils
 , vala
 , zlib
-, withPolkit ? true
+, withPolkit ? (!stdenv.isDarwin)
 }:
 
 # If this package is built with polkit support (withPolkit=true),
@@ -72,6 +72,8 @@ stdenv.mkDerivation rec {
       --replace 'ACL_HELPER_PATH"/' '"'
   '';
 
+  NIX_CFLAGS_COMPILE = "-Wno-unused-function -Wno-missing-field-initializers";
+
   nativeBuildInputs = [
     docbook_xsl
     gettext
@@ -98,24 +100,29 @@ stdenv.mkDerivation rec {
     gtk3
     json-glib
     libcacard
-    libdrm
     libjpeg_turbo
     libopus
     libusb1
     lz4
     openssl
-    phodav
     pixman
     spice-protocol
     usbredir
     zlib
-  ] ++ lib.optionals withPolkit [ polkit acl usbutils ] ;
+  ]
+  ++ lib.optionals withPolkit [ polkit acl usbutils ]
+  ++ lib.optionals (!stdenv.isDarwin) [ libdrm phodav ];
 
   PKG_CONFIG_POLKIT_GOBJECT_1_POLICYDIR = "${placeholder "out"}/share/polkit-1/actions";
 
   mesonFlags = [
     "-Dcelt051=disabled"
     "-Dpulse=disabled" # is deprecated upstream
+  ] ++ lib.optionals stdenv.isDarwin [
+    "-Dwebdav=disabled" # no phodav
+    "-Dpolkit=disabled"
+    #"-Dsmartcard=disabled"
+    #"-Dusbredir=disabled"
   ];
 
   meta = with lib; {
@@ -130,6 +137,6 @@ stdenv.mkDerivation rec {
     homepage = "https://www.spice-space.org/";
     license = licenses.lgpl21;
     maintainers = [ maintainers.xeji ];
-    platforms = platforms.linux;
+    platforms = platforms.unix;
   };
 }
