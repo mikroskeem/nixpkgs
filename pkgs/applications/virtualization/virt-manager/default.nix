@@ -1,4 +1,4 @@
-{ lib, fetchurl, python3Packages, intltool, file
+{ stdenv, lib, fetchurl, python3Packages, intltool, file
 , wrapGAppsHook, gtk-vnc, vte, avahi, dconf
 , gobject-introspection, libvirt-glib, system-libvirt
 , gsettings-desktop-schemas, libosinfo, gnome
@@ -52,7 +52,7 @@ python3Packages.buildPythonApplication rec {
   preFixup = ''
     gappsWrapperArgs+=(--set PYTHONPATH "$PYTHONPATH")
     # these are called from virt-install in initrdinject.py
-    gappsWrapperArgs+=(--prefix PATH : "${makeBinPath [ cpio e2fsprogs file findutils gzip ]}")
+    gappsWrapperArgs+=(--prefix PATH : "${makeBinPath ([ cpio file findutils gzip ] ++ optionals (!stdenv.isDarwin) [ e2fsprogs ])}")
 
     makeWrapperArgs+=("''${gappsWrapperArgs[@]}")
   '';
@@ -83,8 +83,7 @@ python3Packages.buildPythonApplication rec {
       manages Xen and LXC (linux containers).
     '';
     license = licenses.gpl2;
-    # exclude Darwin since libvirt-glib currently doesn't build there
-    platforms = platforms.linux;
+    platforms = platforms.unix;
     maintainers = with maintainers; [ qknight offline fpletz globin ];
   };
 }
