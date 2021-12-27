@@ -63,6 +63,7 @@ stdenv.mkDerivation rec {
     pcre2
     zlib
     icu
+  ] ++ lib.optionals stdenv.isLinux [
     systemd
   ];
 
@@ -79,6 +80,10 @@ stdenv.mkDerivation rec {
     patchShebangs src/parser-seq.py
     patchShebangs src/modes.py
   '';
+
+  mesonFlags = lib.optionals stdenv.isDarwin [
+    "-D_b_symbolic_functions=false"
+  ];
 
   passthru = {
     updateScript = gnome.updateScript {
