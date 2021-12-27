@@ -51,8 +51,13 @@ stdenv.mkDerivation rec {
     glib
     libgcrypt
     cyrus_sasl
-    libpulseaudio
     gtk3
+  ] ++ lib.optionals (!stdenv.isDarwin) [
+    libpulseaudio
+  ];
+
+  mesonFlags = lib.optionals stdenv.isDarwin [
+    "-Dpulseaudio=disabled"
   ];
 
   passthru = {
@@ -67,6 +72,6 @@ stdenv.mkDerivation rec {
     homepage = "https://wiki.gnome.org/Projects/gtk-vnc";
     license = licenses.lgpl2Plus;
     maintainers = with maintainers; [ raskin offline ];
-    platforms = platforms.linux;
+    platforms = platforms.unix;
   };
 }
